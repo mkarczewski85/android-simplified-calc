@@ -15,25 +15,29 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-
 /**
  * Klasa DisplayFragment
  */
 
+public class DisplayFragment extends Fragment implements CalculatorInterface.PublishToView {
 
-public class DisplayFragment extends Fragment {
+    private CalculatorInterface.ForwardDisplayInteractionToPresenter forwardInteraction;
+
+    public void setPresenter(CalculatorInterface.ForwardDisplayInteractionToPresenter forwardInteraction){
+        this.forwardInteraction = forwardInteraction;
+    }
 
     @BindView(R.id.lbl_display)
     TextView display;
 
     @OnClick(R.id.imb_delete)
     public void onDeleteShortClick(View v){
-
+        forwardInteraction.onDeleteShortClick();
     }
 
     @OnLongClick(R.id.imb_delete)
     public void onDeleteLongClick(View v){
-
+        forwardInteraction.onDeleteLongClick();
     }
 
     public DisplayFragment() {
@@ -54,4 +58,13 @@ public class DisplayFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void showResult(String result) {
+
+    }
+
+    @Override
+    public void showToastMessage(String message) {
+
+    }
 }
