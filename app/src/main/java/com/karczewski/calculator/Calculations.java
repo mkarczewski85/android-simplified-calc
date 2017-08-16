@@ -12,7 +12,6 @@ public class Calculations {
     private final Symbols symbols;
     private CalculationResult calculationResult;
     private static String currentExpression;
-    private static boolean expressionHasOperator;
 
 
     interface CalculationResult {
@@ -26,7 +25,6 @@ public class Calculations {
 
     public Calculations() {
         symbols = new Symbols();
-        expressionHasOperator = false;
     }
 
     /**
@@ -34,16 +32,10 @@ public class Calculations {
      */
     public void deleteSingleChar() {
         if (currentExpression.length() > 0) {
-            //jeszcze jeden if sprawdzający czy ununięty znak to operator, trzeba uprościć
-            String singleChar = currentExpression.substring(currentExpression.length(),
-                    currentExpression.length()-1);
-            if (singleChar == "+" || singleChar == "-" || singleChar == "*" || singleChar == "/"){
-                expressionHasOperator = false;
-            }
             currentExpression = currentExpression.substring(0, currentExpression.length() - 1);
             calculationResult.onExpressionChanged(currentExpression, true);
         } else {
-            calculationResult.onExpressionChanged("Nieprawidłowe wyrażenie", false);
+            currentExpression = "";
         }
     }
 
@@ -56,7 +48,6 @@ public class Calculations {
         } else {
             currentExpression = "";
             calculationResult.onExpressionChanged(currentExpression, true);
-            expressionHasOperator = false;
         }
     }
 
@@ -70,7 +61,7 @@ public class Calculations {
             if (currentExpression.length() <= 16) {
                 calculationResult.onExpressionChanged(currentExpression, true);
             } else {
-                calculationResult.onExpressionChanged("Liczba jest zdecydowanie zbyt długa", false);
+                calculationResult.onExpressionChanged("Wyrażenie jest zbyt długie!", false);
             }
         }
     }
@@ -79,10 +70,11 @@ public class Calculations {
      * dodaje znak operatora do currentExpression
      */
     public void appendOperator(String operator) {
-        if (validateExpression(currentExpression)) {
+        if (Utils.validateExpression(currentExpression)) {
             currentExpression += operator;
             calculationResult.onExpressionChanged(currentExpression, true);
-            expressionHasOperator = true;
+        } else {
+            calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe", false);
         }
     }
 
@@ -90,58 +82,31 @@ public class Calculations {
      * dodaje kropkę
      */
     public void appendDecimal() {
-        if (validateExpression(currentExpression)) {
+        if (Utils.validateExpression(currentExpression)) {
             currentExpression += ".";
             calculationResult.onExpressionChanged(currentExpression, true);
+        } else {
+            calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe", false);
         }
     }
 
     /**
      * jeśli currentExpression spełnia warunki, metoda przekazuje wyrażenie do meody eval w obiekcie
-     * symbols (biblioteka Arity). Trzeba stworzyć metodę w Utils, która zamieniałaby symbole
-     * operatorów z InputFragment na symbole przejmowane przez Arity.
+     * symbols (biblioteka Arity). Zewnętrzna metoda replaceOperatorSymbols zmienia symbole
+     * operatorów mnożenia i dzielenia z klawiatury na symbole obsługiwane przez Arity.
      */
     public void performEvaluation() {
-        if (validateExpression(currentExpression)) {
+        Utils.replaceOperatorSymbols(currentExpression);
+        if (Utils.validateExpression(currentExpression)) {
             try {
                 Double result = symbols.eval(currentExpression);
                 currentExpression = Double.toString(result);
                 calculationResult.onExpressionChanged(currentExpression, true);
-                expressionHasOperator = false;
             } catch (SyntaxException e) {
                 calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe", false);
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * zewnętrzna metoda sprawdzająca czy currentExpression spełnia warunki, trzeba wywalić
-     * wywołania metody w obiekcie z powrotem do metod tej klasy (elsach) a metodę validateExpression
-     * jako statyczną przenieśc do klasy Utils
-     */
-    public boolean validateExpression(String expression) {
-        if (expression.endsWith("*") ||
-                expression.endsWith("/") ||
-                expression.endsWith("-") ||
-                expression.endsWith("+") ||
-                expression.endsWith(".")
-                ) {
-            calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe", false);
-            return false;
-        } else if (expression.equals("")) {
-            calculationResult.onExpressionChanged("Wyrażenie jest puste", false);
-            return false;
-        } else if (expression.length() > 16) {
-            calculationResult.onExpressionChanged("Wyrażenie jest zdecydowanie zbyt długie", false);
-            return false;
-        } else if (!expressionHasOperator) { //ja to rozwiązać? może zewnętrzna metoda sprawdzająca całe currentExpression
-            calculationResult.onExpressionChanged("To nie jest wyrażenie arytmetyczne", false);
-            return false;
-        } else {
-            return true;
-        }
-
     }
 
 }

@@ -33,8 +33,8 @@ public final class Utils {
         for (int i = 0; i < expression.length(); i++) {
             if (expression.charAt(i) == '+' ||
                     expression.charAt(i) == '-' ||
-                    expression.charAt(i) == '*' ||
-                    expression.charAt(i) == '/') {
+                    expression.charAt(i) == '\u00D7' ||
+                    expression.charAt(i) == '\u00F7') {
                 hasOperator = true;
             }
         }
@@ -46,6 +46,5 @@ public final class Utils {
         expression.replace('\u00F7', '/');
         return expression;
     }
-
 
 }
