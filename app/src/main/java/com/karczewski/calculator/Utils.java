@@ -86,7 +86,7 @@ public final class Utils {
                 }
                 i++;
             }
-            if (decimalOccurrence > 1){
+            if (decimalOccurrence >= 1){
                 faultInExpression = true;
             }
             i++;
