@@ -43,11 +43,8 @@ public class Calculations {
      * usuwa całe wpisane wyrażenie arytmetyczne lub wwynik w currentExpression
      */
     public void deleteExpression() {
-        if (currentExpression.equals("")) {
-//            calculationResult.onExpressionChanged("Wyświetlacz jest pusty", false);
-        } else {
+        if (currentExpression != "") {
             currentExpression = "";
-            calculationResult.onExpressionChanged(currentExpression, true);
         }
     }
 
@@ -55,14 +52,11 @@ public class Calculations {
      * dodaje kolejną wciśniętą cyfrę do currentExpression
      */
     public void appendNumber(String number) {
-        if (currentExpression.startsWith("0") && number.equals("0")) {
-            calculationResult.onExpressionChanged("Nieprawidłowe wyrażenie", false);
+        if (currentExpression.length() <= 16) {
+            currentExpression += number;
+            calculationResult.onExpressionChanged(currentExpression, true);
         } else {
-            if (currentExpression.length() <= 16) {
-                calculationResult.onExpressionChanged(currentExpression, true);
-            } else {
-                calculationResult.onExpressionChanged("Wyrażenie jest zbyt długie!", false);
-            }
+            calculationResult.onExpressionChanged("Wyrażenie jest zbyt długie!", false);
         }
     }
 
@@ -70,11 +64,9 @@ public class Calculations {
      * dodaje znak operatora do currentExpression
      */
     public void appendOperator(String operator) {
-        if (Utils.validateExpression(currentExpression)) {
+        if (Utils.validateExpressionForOperators(currentExpression)) {
             currentExpression += operator;
             calculationResult.onExpressionChanged(currentExpression, true);
-        } else {
-            calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe", false);
         }
     }
 
@@ -82,11 +74,9 @@ public class Calculations {
      * dodaje kropkę
      */
     public void appendDecimal() {
-        if (Utils.validateExpression(currentExpression)) {
+        if (Utils.validateExpressionForDecimal(currentExpression)) {
             currentExpression += ".";
             calculationResult.onExpressionChanged(currentExpression, true);
-        } else {
-            calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe", false);
         }
     }
 
@@ -96,14 +86,15 @@ public class Calculations {
      * operatorów mnożenia i dzielenia z klawiatury na symbole obsługiwane przez Arity.
      */
     public void performEvaluation() {
-        Utils.replaceOperatorSymbols(currentExpression);
-        if (Utils.validateExpression(currentExpression)) {
+        currentExpression = Utils.replaceOperatorSymbols(currentExpression);
+        if (Utils.validateExpressionForEvaluation(currentExpression)) {
             try {
                 Double result = symbols.eval(currentExpression);
                 currentExpression = Double.toString(result);
+                currentExpression = Utils.trimExpression(currentExpression);
                 calculationResult.onExpressionChanged(currentExpression, true);
             } catch (SyntaxException e) {
-                calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe", false);
+                calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe!", false);
                 e.printStackTrace();
             }
         }

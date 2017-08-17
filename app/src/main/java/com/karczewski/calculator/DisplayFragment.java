@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -36,15 +37,16 @@ public class DisplayFragment extends Fragment implements CalculatorInterface.Pub
     }
 
     @OnLongClick(R.id.imb_delete)
-    public void onDeleteLongClick(View v){
+    public boolean onDeleteLongClick(View v){
         forwardInteraction.onDeleteLongClick();
+        return true;
     }
 
     public DisplayFragment() {
 
     }
 
-    public DisplayFragment newInstance(){
+    public static DisplayFragment newInstance(){
         return new DisplayFragment();
     }
 
@@ -60,11 +62,11 @@ public class DisplayFragment extends Fragment implements CalculatorInterface.Pub
 
     @Override
     public void showResult(String result) {
-
+        display.setText(result);
     }
 
     @Override
     public void showToastMessage(String message) {
-
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
     }
 }

@@ -5,51 +5,53 @@ package com.karczewski.calculator;
  */
 
 public class CalculatorPresenter implements CalculatorInterface.ForwardDisplayInteractionToPresenter,
-        CalculatorInterface.ForwardInputInteractionToPresenter, CalculatorInterface.PublishToView {
+        CalculatorInterface.ForwardInputInteractionToPresenter, Calculations.CalculationResult {
 
     private CalculatorInterface.PublishToView publishResult;
+    private Calculations calc;
 
     public CalculatorPresenter(CalculatorInterface.PublishToView publishResult) {
         this.publishResult = publishResult;
-    }
-
-    @Override
-    public void showResult(String result) {
-
-    }
-
-    @Override
-    public void showToastMessage(String message) {
-
+        this.calc = new Calculations();
+        this.calc.setCalculationResultListener(this);
     }
 
     @Override
     public void onDeleteShortClick() {
-
+        calc.deleteSingleChar();
     }
 
     @Override
     public void onDeleteLongClick() {
-
+        calc.deleteExpression();
     }
 
     @Override
     public void onNumberClick(int number) {
-
+        calc.appendNumber(Integer.toString(number));
     }
 
     @Override
     public void onDecimalClick() {
-
+        calc.appendDecimal();
     }
 
     @Override
     public void onEvaluateClick() {
-
+        calc.performEvaluation();
     }
 
     @Override
     public void onOperatorClick(String operator) {
+        calc.appendOperator(operator);
+    }
 
+    @Override
+    public void onExpressionChanged(String result, boolean succesful) {
+        if (succesful){
+            publishResult.showResult(result);
+        } else {
+            publishResult.showToastMessage(result);
+        }
     }
 }
