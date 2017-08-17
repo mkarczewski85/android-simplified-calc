@@ -83,8 +83,8 @@ public final class Utils {
                     i < expression.length()){
                 if (expression.charAt(i) == '.'){
                     decimalOccurrence++;
-                    i++;
                 }
+                i++;
             }
             if (decimalOccurrence > 1){
                 faultInExpression = true;
