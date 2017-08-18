@@ -83,10 +83,10 @@ public final class Utils {
 
         while (!endOfExpression) {
             StringBuilder tmpValue = new StringBuilder();
-            while (i < expression.length() || (expression.charAt(i) == '+' ||
-                    expression.charAt(i) == '-' ||
-                    expression.charAt(i) == '\u00D7' ||
-                    expression.charAt(i) == '\u00F7')) {
+            while (i < expression.length() && (expression.charAt(i) != '+' ||
+                    expression.charAt(i) != '-' ||
+                    expression.charAt(i) != '\u00D7' ||
+                    expression.charAt(i) != '\u00F7')) {
                 tmpValue.append(expression.charAt(i));
                 if (expression.charAt(i) == '.') {
                     decCounter++;
