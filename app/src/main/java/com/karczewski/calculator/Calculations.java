@@ -45,6 +45,7 @@ public class Calculations {
     public void deleteExpression() {
         if (currentExpression != "") {
             currentExpression = "";
+            calculationResult.onExpressionChanged(currentExpression, true);
         }
     }
 
@@ -67,6 +68,9 @@ public class Calculations {
         if (Utils.validateExpressionForOperators(currentExpression)) {
             currentExpression += operator;
             calculationResult.onExpressionChanged(currentExpression, true);
+        } else if (currentExpression == "" && operator == "-"){
+            currentExpression += operator;
+            calculationResult.onExpressionChanged(currentExpression, true);
         }
     }
 
@@ -86,8 +90,8 @@ public class Calculations {
      * operatorów mnożenia i dzielenia z klawiatury na symbole obsługiwane przez Arity.
      */
     public void performEvaluation() {
-        currentExpression = Utils.replaceOperatorSymbols(currentExpression);
-        if (Utils.validateExpressionForEvaluation(currentExpression)) {
+        if (currentExpression != "" && Utils.validateExpressionForEvaluation(currentExpression)) {
+            currentExpression = Utils.replaceOperatorSymbols(currentExpression);
             try {
                 Double result = symbols.eval(currentExpression);
                 currentExpression = Double.toString(result);
