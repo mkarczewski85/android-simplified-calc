@@ -98,13 +98,12 @@ public final class Utils {
                 }
             }
             valueList.add(tmpValue.toString());
-            if (i < expression.length() || (expression.charAt(i + 1) == '+' ||
+            if (i < expression.length() && (expression.charAt(i + 1) == '+' ||
                     expression.charAt(i) == '-' ||
                     expression.charAt(i) == '\u00D7' ||
                     expression.charAt(i) == '\u00F7')) {
                 i++;
-            }
-            if (i == expression.length() - 1) {
+            } else if (i == expression.length()) {
                 endOfExpression = true;
             }
         }
