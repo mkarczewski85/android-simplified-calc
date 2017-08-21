@@ -65,11 +65,11 @@ public class Calculations {
      * dodaje znak operatora do currentExpression
      */
     public void appendOperator(String operator) {
-        if (Utils.validateExpressionForOperators(currentExpression)) {
+        if (!operator.equals("–") && Utils.validateExpressionForOperators(currentExpression)) {
             currentExpression += operator;
             calculationResult.onExpressionChanged(currentExpression, true);
-        } else if (currentExpression == "" && operator == "-"){
-            currentExpression += operator;
+        } else if (operator.equals("–") && Utils.validateForMinus(currentExpression)) {
+            currentExpression += "-";
             calculationResult.onExpressionChanged(currentExpression, true);
         }
     }
@@ -91,12 +91,17 @@ public class Calculations {
      */
     public void performEvaluation() {
         if (currentExpression != "" && Utils.validateExpressionForEvaluation(currentExpression)) {
-            currentExpression = Utils.replaceOperatorSymbols(currentExpression);
             try {
                 Double result = symbols.eval(currentExpression);
-                currentExpression = Double.toString(result);
-                currentExpression = Utils.trimExpression(currentExpression);
-                calculationResult.onExpressionChanged(currentExpression, true);
+                if (Utils.validateResult(result)){
+                    currentExpression = Double.toString(result);
+                    currentExpression = Utils.trimExpression(currentExpression);
+                    calculationResult.onExpressionChanged(currentExpression, true);
+                } else {
+                    currentExpression = "";
+                    calculationResult.onExpressionChanged(currentExpression, true);
+                    calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe!", false);
+                }
             } catch (SyntaxException e) {
                 calculationResult.onExpressionChanged("Wyrażenie jest nieprawidłowe!", false);
                 e.printStackTrace();

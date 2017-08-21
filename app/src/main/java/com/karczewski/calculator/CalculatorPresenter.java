@@ -47,8 +47,8 @@ public class CalculatorPresenter implements CalculatorInterface.ForwardDisplayIn
     }
 
     @Override
-    public void onExpressionChanged(String result, boolean succesful) {
-        if (succesful){
+    public void onExpressionChanged(String result, boolean successful) {
+        if (successful){
             publishResult.showResult(result);
         } else {
             publishResult.showToastMessage(result);

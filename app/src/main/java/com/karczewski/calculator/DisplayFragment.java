@@ -67,6 +67,6 @@ public class DisplayFragment extends Fragment implements CalculatorInterface.Pub
 
     @Override
     public void showToastMessage(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 }
