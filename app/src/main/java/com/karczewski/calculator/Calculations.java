@@ -2,6 +2,7 @@ package com.karczewski.calculator;
 
 import org.javia.arity.Symbols;
 import org.javia.arity.SyntaxException;
+import org.javia.arity.Util;
 
 /**
  * Klasa Calculations
@@ -13,6 +14,9 @@ public class Calculations {
     private CalculationResult calculationResult;
     private static String currentExpression;
 
+    private static final int MAX_DIGITS = 12;
+    private static final int ROUNDING_DIGITS = Math.max(17 - MAX_DIGITS, 0);
+    public static final int MAX_EXPRESSION_LENGTH = 16;
 
     interface CalculationResult {
         void onExpressionChanged(String result, boolean succesful);
@@ -53,7 +57,7 @@ public class Calculations {
      * dodaje kolejną wciśniętą cyfrę do currentExpression
      */
     public void appendNumber(String number) {
-        if (currentExpression.length() <= 16) {
+        if (currentExpression.length() <= MAX_EXPRESSION_LENGTH) {
             currentExpression += number;
             calculationResult.onExpressionChanged(currentExpression, true);
         } else {
@@ -65,10 +69,10 @@ public class Calculations {
      * dodaje znak operatora do currentExpression
      */
     public void appendOperator(String operator) {
-        if (!operator.equals("–") && Utils.validateExpressionForOperators(currentExpression)) {
+        if (!operator.equals("–") && ValidationUtils.validateExpressionForOperators(currentExpression)) {
             currentExpression += operator;
             calculationResult.onExpressionChanged(currentExpression, true);
-        } else if (operator.equals("–") && Utils.validateForMinus(currentExpression)) {
+        } else if (operator.equals("–") && ValidationUtils.validateForMinus(currentExpression)) {
             currentExpression += "-";
             calculationResult.onExpressionChanged(currentExpression, true);
         }
@@ -78,7 +82,7 @@ public class Calculations {
      * dodaje kropkę
      */
     public void appendDecimal() {
-        if (Utils.validateExpressionForDecimal(currentExpression)) {
+        if (ValidationUtils.validateExpressionForDecimal(currentExpression)) {
             currentExpression += ".";
             calculationResult.onExpressionChanged(currentExpression, true);
         }
@@ -90,12 +94,12 @@ public class Calculations {
      * operatorów mnożenia i dzielenia z klawiatury na symbole obsługiwane przez Arity.
      */
     public void performEvaluation() {
-        if (currentExpression != "" && Utils.validateExpressionForEvaluation(currentExpression)) {
+        if (currentExpression != "" && ValidationUtils.validateExpressionForEvaluation(currentExpression)) {
             try {
                 Double result = symbols.eval(currentExpression);
-                if (Utils.validateResult(result)){
-                    currentExpression = Double.toString(result);
-                    currentExpression = Utils.trimExpression(currentExpression);
+                if (ValidationUtils.validateResult(result)){
+                    currentExpression =  Util.doubleToString(result, MAX_DIGITS, ROUNDING_DIGITS);
+                    currentExpression = ValidationUtils.trimExpression(currentExpression);
                     calculationResult.onExpressionChanged(currentExpression, true);
                 } else {
                     currentExpression = "";

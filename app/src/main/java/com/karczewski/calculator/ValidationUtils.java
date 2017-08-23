@@ -3,12 +3,12 @@ package com.karczewski.calculator;
 import java.util.ArrayList;
 
 /**
- * Klasa narzędziowa Utils
+ * Klasa narzędziowa ValidationUtils
  */
 
-public final class Utils {
+public final class ValidationUtils {
 
-    private Utils() {
+    private ValidationUtils() {
         // klasa narzędziowa, brak możliwości stworzenia instancji
     }
 
